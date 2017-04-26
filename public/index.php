@@ -8,26 +8,38 @@
 </head>
 <body>
   <h2>Guitar Wars - High Scores</h2>
-  <p>Welcome, Guitar Warrior, do you have what it takes to crack the high score list? If so, just <a href="addscore.php">add your own score</a>.</p>
+  <p>Welcome, Guitar Nerd! Do you have what it takes to top the high score list? If so, just <a href="addscore.php">add your own score</a>.</p>
   <hr />
 
 <?php
+require_once ('appvars.php');
   // Connect to the database
   $dbc = mysqli_connect('127.0.0.1', 'homestead', 'secret', 'guitar');
 
   // Retrieve the score data from MySQL
-  $query = "SELECT * FROM guitarwars";
+  $query = "SELECT * FROM guitarwars ORDER BY score DESC, date ASC";
   $data = mysqli_query($dbc, $query);
 
   // Loop through the array of score data, formatting it as HTML
   echo '<table>';
-  while ($row = mysqli_fetch_array($data)) {
+  $i = 0;
+  while ($row = mysqli_fetch_array($data))  {
+    if ($i == 0)  {
+      echo '<tr><td colspan="2" class="topscoreheader">Top Score: ' . $row['score'] . '</td></tr>';
+    }
     // Display the score data
     echo '<tr><td class="scoreinfo">';
     echo '<span class="score">' . $row['score'] . '</span><br />';
     echo '<strong>Name:</strong> ' . $row['name'] . '<br />';
-    echo '<strong>Date:</strong> ' . $row['date'] . '</td></tr>';
-  }
+    echo '<strong>Date:</strong> ' . $row['date'] . '</td>';
+    if (is_file(GN_UPLOADPATH . $row['screenshot']) && filesize(GN_UPLOADPATH . $row['screenshot']) > 0) {
+      echo '<td><img src="' . GN_UPLOADPATH . $row['screenshot'] . '" alt="Score image" /></td></tr>';
+    }
+    else {
+      echo '<td><img src="' . GN_UPLOADPATH . 'unverified.gif' . '" alt="Unverified score" /></td></tr>';
+    }
+  $i++;
+}
   echo '</table>';
 
   mysqli_close($dbc);
