@@ -7,7 +7,7 @@ require_once('connectvars.php');
 $dbc = mysqli_connect('127.0.0.1', 'homestead', 'secret', 'guitar');
 
 // gets scores from db
-$query = "SELECT * FROM guitarwars ORDERBY score DESC, date ASC";
+$query = "SELECT * FROM guitarwars ORDER BY score DESC, date ASC";
 $data = mysqli_query($dbc, $query);
 
 // loop through score data, formatting as html table
